@@ -1,10 +1,9 @@
 from django.db import models
 
 
-class DockerAppp(models.Model):
-    envs = 0
-    command = 0
+class DockerApp(models.Model):
 
     name = models.CharField(max_length=255)
     image = models.CharField(max_length=1024)
     envs = models.JSONField()
+    command = models.CharField(max_length=1024)
