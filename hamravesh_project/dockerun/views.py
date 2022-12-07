@@ -21,17 +21,23 @@ def create_docker(request):
 
         app_detail.save()
 
-        return JsonResponse({""}, status=200)
+        return JsonResponse({"info": "all data saved"}, status=200)
 
 
 def get_list_app(request):
     all_apps = DockerApp.objects.all()
+    list_app = []
+    for i in range(len(all_apps)):
+        list_app.append(all_apps[i])
 
-    return HttpResponse(all_apps)
+    return HttpResponse(list_app)
 
 
 def get_app(request):
-    return HttpResponse
+    name = request.GET.get("name")
+    app = DockerApp.objects.filter(name=name)
+
+    return HttpResponse(app)
 
 
 def del_app(request):

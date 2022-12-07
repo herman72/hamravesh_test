@@ -7,3 +7,4 @@ class DockerApp(models.Model):
     image = models.CharField(max_length=1024)
     envs = models.JSONField()
     command = models.CharField(max_length=1024)
+    status = models.BooleanField(default=False)
