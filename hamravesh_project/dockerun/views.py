@@ -25,7 +25,9 @@ def create_docker(request):
 
 
 def get_list_app(request):
-    return HttpResponse
+    all_apps = DockerApp.objects.all()
+
+    return HttpResponse(all_apps)
 
 
 def get_app(request):
