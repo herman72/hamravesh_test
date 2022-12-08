@@ -1,19 +1,20 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from models import DockerApp
+from .models import DockerApp
+from django.views.decorators.csrf import csrf_exempt
 
 
+@csrf_exempt
 def create_docker(request):
     if request.method != "POST":
-        return JsonResponse({""}, status=400)
+        return JsonResponse({"request method": "Post"}, status=400)
     else:
         app_detail = DockerApp()
-        name = request.Post.get("name")
-        image = request.Post.get("image")
-        envs = request.Post.get("evs")
-        command = request.Post.get("command")
-
+        name = request.POST.get("name")
+        image = request.POST.get("image")
+        envs = request.POST.get("envs")
+        command = request.POST.get("command")
         app_detail.name = name
         app_detail.image = image
         app_detail.envs = envs
@@ -25,7 +26,7 @@ def create_docker(request):
 
 
 def get_list_app(request):
-    all_apps = DockerApp.objects.all()
+    all_apps = DockerApp.objects.all().values()
     list_app = []
     for i in range(len(all_apps)):
         list_app.append(all_apps[i])
