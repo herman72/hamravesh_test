@@ -36,16 +36,28 @@ def get_list_app(request):
 
 def get_app(request):
     name = request.GET.get("name")
-    app = DockerApp.objects.filter(name=name)
-
-    return HttpResponse(app)
+    app = DockerApp.objects.filter(name=name).values()
+    if len(app) ==0:
+        return HttpResponse("there is no app with that name")
+    else:
+        return HttpResponse(app)
 
 
 def del_app(request):
-    return HttpResponse
+    name = request.GET.get("name")
+    app = DockerApp.objects.filter(name=name).values()
+    if len(app) == 0:
+        return HttpResponse("there is no app with that name")
+    else:
+        app_delete = DockerApp.objects.filter(name=name)
+        app_delete.delete()
+        return HttpResponse(app[0]["name"]+" deleted!")
+
 
 
 def edit_app(request):
+    name = request.GET.get("name")
+    app = DockerApp.objects.filter(name=name).values()
     return HttpResponse
 
 
