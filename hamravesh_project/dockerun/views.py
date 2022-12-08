@@ -58,7 +58,19 @@ def del_app(request):
 def edit_app(request):
     name = request.GET.get("name")
     app = DockerApp.objects.filter(name=name).values()
-    return HttpResponse
+    if len(app) == 0:
+        return HttpResponse("there is no app with that name")
+    else:
+        # print(list(request.GET.keys()))
+        list_of_edit = list(request.GET.keys())
+        app_edit = DockerApp.objects.get(name=name)
+        for i in list_of_edit:
+            # print(request.GET.get(str(i)))
+            app_edit.__dict__[str(i)] = request.GET.get(str(i))
+            # print(app_edit.__dict__["name"])
+        app_edit.save()
+
+        return JsonResponse({"info": "all change data saved"}, status=200)
 
 
 def run_app(request):
