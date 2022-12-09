@@ -104,7 +104,7 @@ class DeleteApp(APIView):
 
 class EditApp(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request):
+    def post(self, request):
         name = request.data["name"]
         app = DockerApp.objects.filter(name=name).values()
         if len(app) == 0:
@@ -140,4 +140,5 @@ class EditApp(APIView):
 
 
 def run_app(request):
+
     return HttpResponse
