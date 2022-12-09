@@ -5,19 +5,19 @@ from .models import DockerApp
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 
+class CreateDocker(APIView):
+    permission_classes = [IsAuthenticated]
 
-@csrf_exempt
-def create_docker(request):
-    if request.method != "POST":
-        return JsonResponse({"request method": "Post"}, status=400)
-    else:
+    def post(self, request):
         app_detail = DockerApp()
-        name = request.POST.get("name")
-        image = request.POST.get("image")
-        envs = request.POST.get("envs")
-        command = request.POST.get("command")
+        name = request.data["name"]
+        image = request.data["image"]
+        envs = request.data["envs"]
+        command = request.data["command"]
         app_detail.name = name
         app_detail.image = image
         app_detail.envs = envs
@@ -25,17 +25,50 @@ def create_docker(request):
 
         app_detail.save()
 
-        return JsonResponse({"info": "all data saved"}, status=200)
+        return Response({"info": "all data saved"}, status=200)
 
 
-def get_list_app(request):
-    all_apps = DockerApp.objects.all().values()
-    list_app = []
-    for i in range(len(all_apps)):
-        list_app.append(all_apps[i])
 
-    return HttpResponse(list_app)
+# @csrf_exempt
+# @api_view(['POST'])
+# def create_docker(request):
+#     if request.method != "POST":
+#         return JsonResponse({"request method": "Post"}, status=400)
+#     else:
+#         app_detail = DockerApp()
+#         name = request.POST.get("name")
+#         image = request.POST.get("image")
+#         envs = request.POST.get("envs")
+#         command = request.POST.get("command")
+#         app_detail.name = name
+#         app_detail.image = image
+#         app_detail.envs = envs
+#         app_detail.command = command
+#
+#         app_detail.save()
+#
+#         return JsonResponse({"info": "all data saved"}, status=200)
 
+class GetListApp(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        all_apps = DockerApp.objects.all().values()
+        list_app = []
+        for i in range(len(all_apps)):
+            list_app.append(all_apps[i])
+
+        return Response({"list of app":list_app}, status=200)
+
+
+# def get_list_app(request):
+#     all_apps = DockerApp.objects.all().values()
+#     list_app = []
+#     for i in range(len(all_apps)):
+#         list_app.append(all_apps[i])
+#
+#     return HttpResponse(list_app)
+
+class GetApp(APIView):
 
 def get_app(request):
     name = request.GET.get("name")
