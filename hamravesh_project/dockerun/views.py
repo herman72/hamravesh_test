@@ -69,44 +69,74 @@ class GetListApp(APIView):
 #     return HttpResponse(list_app)
 
 class GetApp(APIView):
+    permission_classes = [IsAuthenticated]
 
-def get_app(request):
-    name = request.GET.get("name")
-    app = DockerApp.objects.filter(name=name).values()
-    if len(app) ==0:
-        return HttpResponse("there is no app with that name")
-    else:
-        return HttpResponse(app)
-
-
-def del_app(request):
-    name = request.GET.get("name")
-    app = DockerApp.objects.filter(name=name).values()
-    if len(app) == 0:
-        return HttpResponse("there is no app with that name")
-    else:
-        app_delete = DockerApp.objects.filter(name=name)
-        app_delete.delete()
-        return HttpResponse(app[0]["name"]+" deleted!")
+    def get(self, request):
+        name = request.data["name"]
+        app = DockerApp.objects.filter(name=name).values()
+        if len(app) == 0:
+            return Response({"info": "there is no app with that name"})
+        else:
+            return Response({"app":app})
 
 
+# def get_app(request):
+#     name = request.GET.get("name")
+#     app = DockerApp.objects.filter(name=name).values()
+#     if len(app) ==0:
+#         return HttpResponse("there is no app with that name")
+#     else:
+#         return HttpResponse(app)
 
-def edit_app(request):
-    name = request.GET.get("name")
-    app = DockerApp.objects.filter(name=name).values()
-    if len(app) == 0:
-        return HttpResponse("there is no app with that name")
-    else:
-        # print(list(request.GET.keys()))
-        list_of_edit = list(request.GET.keys())
-        app_edit = DockerApp.objects.get(name=name)
-        for i in list_of_edit:
-            # print(request.GET.get(str(i)))
-            app_edit.__dict__[str(i)] = request.GET.get(str(i))
-            # print(app_edit.__dict__["name"])
-        app_edit.save()
+class DeleteApp(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        name = request.data["name"]
+        app = DockerApp.objects.filter(name=name).values()
+        if len(app) == 0:
+            return Response({"info":"there is no app with that name"})
+        else:
+            app_delete = DockerApp.objects.filter(name=name)
+            app_delete.delete()
+            return Response({"info": app[0]["name"] + " deleted!"})
 
-        return JsonResponse({"info": "all change data saved"}, status=200)
+
+
+class EditApp(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        name = request.data["name"]
+        app = DockerApp.objects.filter(name=name).values()
+        if len(app) == 0:
+            return Response({"info":"there is no app with that name"})
+        else:
+            list_of_edit = list(request.data.keys())
+            app_edit = DockerApp.objects.get(name=name)
+            for i in list_of_edit:
+            #     # print(request.GET.get(str(i)))
+                app_edit.__dict__[str(i)] = request.data[str(i)]
+            #     # print(app_edit.__dict__["name"])
+            app_edit.save()
+
+            return Response({"info": "all change data saved"}, status=200)
+
+
+# def edit_app(request):
+#     name = request.GET.get("name")
+#     app = DockerApp.objects.filter(name=name).values()
+#     if len(app) == 0:
+#         return HttpResponse("there is no app with that name")
+#     else:
+#         # print(list(request.GET.keys()))
+#         list_of_edit = list(request.GET.keys())
+#         app_edit = DockerApp.objects.get(name=name)
+#         for i in list_of_edit:
+#             # print(request.GET.get(str(i)))
+#             app_edit.__dict__[str(i)] = request.GET.get(str(i))
+#             # print(app_edit.__dict__["name"])
+#         app_edit.save()
+#
+#         return JsonResponse({"info": "all change data saved"}, status=200)
 
 
 def run_app(request):
