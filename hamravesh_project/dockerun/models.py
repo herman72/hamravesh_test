@@ -15,3 +15,4 @@ class ExecutionApp(models.Model):
     run_at = models.DateTimeField(auto_now_add=True)
     run_params = models.JSONField()
     is_running = models.BooleanField()
+    created_container_id = models.CharField(max_length=50)
