@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django_crontab',
     'rest_framework.authtoken',
     'dockerun.apps.DockerunConfig',
     "django.contrib.admin",
@@ -40,6 +41,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'rest_framework',
+]
+
+CRONJOBS = [
+    ('*/1 * * * *', 'dockerun.cron.my_scheduled_job')
 ]
 
 MIDDLEWARE = [
