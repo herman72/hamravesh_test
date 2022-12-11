@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 import os
 from subprocess import call
+import subprocess
 from ast import literal_eval
 
 
@@ -143,6 +144,7 @@ class EditApp(APIView):
 
 
 class RunApp(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         name = request.data["name"]
@@ -158,7 +160,13 @@ class RunApp(APIView):
             value = all_values[all_keys[i]]
             variable_string =variable_string+"-e "+str(all_keys[i])+"="+str(value)+" "
 
-        run_docker = "docker run -d "+variable_string+""
+        run_docker = "docker run -d "+variable_string+"-l l1=v1 "+str(app[0]["image"])+" "+str(app[0]["command"])
+        returned_output = subprocess.check_output(run_docker, shell=True)
+        returned_output = (returned_output.decode("utf-8"))
+        exe_app = ExecutionApp()
+        exe_app.run_params = app[0]["envs"]
+        exe_app.is_running = True
+        exe_app.created_container_id = returned_output
 
         return Response({"info": "salam"})
 
