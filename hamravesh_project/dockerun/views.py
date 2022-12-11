@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import DockerApp
+from .models import DockerApp, ExecutionApp
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+import os
+from subprocess import call
+from ast import literal_eval
 
 
 class CreateDocker(APIView):
@@ -139,6 +142,30 @@ class EditApp(APIView):
 #         return JsonResponse({"info": "all change data saved"}, status=200)
 
 
-def run_app(request):
+class RunApp(APIView):
 
-    return HttpResponse
+    def post(self, request):
+        name = request.data["name"]
+        app = DockerApp.objects.filter(name=name).values()
+
+        correct_values = app[0]["envs"].replace('[', '{')
+        correct_values = correct_values.replace(']', '}')
+        all_values = literal_eval(correct_values)
+        all_keys = list(all_values.keys())
+        variable_string = str()
+
+        for i in range(len(all_values)):
+            value = all_values[all_keys[i]]
+            variable_string =variable_string+"-e "+str(all_keys[i])+"="+str(value)+" "
+
+        run_docker = "docker run -d "+variable_string+""
+
+        return Response({"info": "salam"})
+
+# def run_app(request):
+#     name = request.POST.get("name")
+#     app = DockerApp.objects.filter(name=name).values()
+#
+#     os.system("docker ps >> test2.txt")
+#
+#     return HttpResponse

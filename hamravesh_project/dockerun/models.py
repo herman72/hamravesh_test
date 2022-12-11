@@ -11,7 +11,7 @@ class DockerApp(models.Model):
 
 class ExecutionApp(models.Model):
 
-    app = models.ForeignKey(DockerApp, on_delete=models.SET_NULL)
+    app = models.ForeignKey(DockerApp, on_delete=models.SET_NULL, null=True)
     run_at = models.DateTimeField(auto_now_add=True)
     run_params = models.JSONField()
     is_running = models.BooleanField()
