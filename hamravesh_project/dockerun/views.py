@@ -1,16 +1,17 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.http import JsonResponse
-from .models import DockerApp, ExecutionApp
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-import os
-from subprocess import call
 import subprocess
 from ast import literal_eval
+from rest_framework.views import APIView
+from .models import DockerApp, ExecutionApp
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+import os
+from subprocess import call
+# from django.shortcuts import render
+# from django.http import HttpResponse
+# from django.http import JsonResponse
+# from rest_framework.decorators import api_view
+# from django.views.decorators.csrf import csrf_exempt
 
 
 class CreateDocker(APIView):
@@ -33,26 +34,6 @@ class CreateDocker(APIView):
 
 
 
-# @csrf_exempt
-# @api_view(['POST'])
-# def create_docker(request):
-#     if request.method != "POST":
-#         return JsonResponse({"request method": "Post"}, status=400)
-#     else:
-#         app_detail = DockerApp()
-#         name = request.POST.get("name")
-#         image = request.POST.get("image")
-#         envs = request.POST.get("envs")
-#         command = request.POST.get("command")
-#         app_detail.name = name
-#         app_detail.image = image
-#         app_detail.envs = envs
-#         app_detail.command = command
-#
-#         app_detail.save()
-#
-#         return JsonResponse({"info": "all data saved"}, status=200)
-
 class GetListApp(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
@@ -63,14 +44,6 @@ class GetListApp(APIView):
 
         return Response({"list of app":list_app}, status=200)
 
-
-# def get_list_app(request):
-#     all_apps = DockerApp.objects.all().values()
-#     list_app = []
-#     for i in range(len(all_apps)):
-#         list_app.append(all_apps[i])
-#
-#     return HttpResponse(list_app)
 
 class GetApp(APIView):
     permission_classes = [IsAuthenticated]
@@ -83,14 +56,6 @@ class GetApp(APIView):
         else:
             return Response({"app":app})
 
-
-# def get_app(request):
-#     name = request.GET.get("name")
-#     app = DockerApp.objects.filter(name=name).values()
-#     if len(app) ==0:
-#         return HttpResponse("there is no app with that name")
-#     else:
-#         return HttpResponse(app)
 
 class DeleteApp(APIView):
     permission_classes = [IsAuthenticated]
@@ -117,30 +82,10 @@ class EditApp(APIView):
             list_of_edit = list(request.data.keys())
             app_edit = DockerApp.objects.get(name=name)
             for i in list_of_edit:
-            #     # print(request.GET.get(str(i)))
                 app_edit.__dict__[str(i)] = request.data[str(i)]
-            #     # print(app_edit.__dict__["name"])
             app_edit.save()
 
             return Response({"info": "all change data saved"}, status=200)
-
-
-# def edit_app(request):
-#     name = request.GET.get("name")
-#     app = DockerApp.objects.filter(name=name).values()
-#     if len(app) == 0:
-#         return HttpResponse("there is no app with that name")
-#     else:
-#         # print(list(request.GET.keys()))
-#         list_of_edit = list(request.GET.keys())
-#         app_edit = DockerApp.objects.get(name=name)
-#         for i in list_of_edit:
-#             # print(request.GET.get(str(i)))
-#             app_edit.__dict__[str(i)] = request.GET.get(str(i))
-#             # print(app_edit.__dict__["name"])
-#         app_edit.save()
-#
-#         return JsonResponse({"info": "all change data saved"}, status=200)
 
 
 class RunApp(APIView):
@@ -175,17 +120,10 @@ class RunApp(APIView):
         exe_app.created_container_id = returned_output
         exe_app.save()
 
-        return Response({"info": "salam"})
+        return Response({"info": "run the app"+name})
 
-def list_app_running(request):
-    exe_app = ExecutionApp.objects.all().values()
-    print(exe_app)
-    return HttpResponse(exe_app)
-    # running =
-# def run_app(request):
-#     name = request.POST.get("name")
-#     app = DockerApp.objects.filter(name=name).values()
-#
-#     os.system("docker ps >> test2.txt")
-#
-#     return HttpResponse
+class ListAppRuning(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        exe_app = ExecutionApp.objects.all().values()
+        return Response({"statues app":exe_app})

@@ -1,5 +1,5 @@
-from .models import ExecutionApp
 import docker
+from .models import ExecutionApp
 def my_scheduled_job():
 
   all_exe_app = ExecutionApp.objects.filter(is_running=True)
