@@ -160,16 +160,28 @@ class RunApp(APIView):
             value = all_values[all_keys[i]]
             variable_string =variable_string+"-e "+str(all_keys[i])+"="+str(value)+" "
 
-        run_docker = "docker run -d "+variable_string+"-l l1=v1 "+str(app[0]["image"])+" "+str(app[0]["command"])
+        run_docker = "docker run -d "+variable_string+"-l l1=v1 "+str(app[0]["image"])
         returned_output = subprocess.check_output(run_docker, shell=True)
         returned_output = (returned_output.decode("utf-8"))
+        # exec_docker = "docker exec" + returned_output + +str(app[0]["command"])
+        # subprocess.check_output(exec_docker, shell=True)
+
+        # docker_app = DockerApp.objects.filter(name=name)
         exe_app = ExecutionApp()
+        exe_app.app = DockerApp(name=name, envs = app[0]["envs"])
+        exe_app.app.save()
         exe_app.run_params = app[0]["envs"]
         exe_app.is_running = True
         exe_app.created_container_id = returned_output
+        exe_app.save()
 
         return Response({"info": "salam"})
 
+def list_app_running(request):
+    exe_app = ExecutionApp.objects.all().values()
+    print(exe_app)
+    return HttpResponse(exe_app)
+    # running =
 # def run_app(request):
 #     name = request.POST.get("name")
 #     app = DockerApp.objects.filter(name=name).values()

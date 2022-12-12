@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('*/1 * * * *', 'dockerun.cron.my_scheduled_job')
+    ('*/2 * * * *', 'dockerun.cron.my_scheduled_job')
 ]
 
 MIDDLEWARE = [

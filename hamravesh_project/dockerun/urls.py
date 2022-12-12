@@ -9,4 +9,5 @@ urlpatterns = [
     path("del/", DeleteApp.as_view(), name="del_dockerun"),
     path("edit/", EditApp.as_view(), name="edit_dockerun"),
     path("run_app/", RunApp.as_view(), name="runApp_dockerun"),
+    path("list_run/", views.list_app_running),
 ]
