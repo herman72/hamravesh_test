@@ -93,9 +93,9 @@ class RunApp(APIView):
 
     def post(self, request):
         name = request.data["name"]
-        app = DockerApp.objects.filter(name=name).values()
+        app = DockerApp.objects.filter(name=name).first()
 
-        correct_values = app[0]["envs"].replace('[', '{')
+        correct_values = app.envs.replace('[', '{')
         correct_values = correct_values.replace(']', '}')
         all_values = literal_eval(correct_values)
         all_keys = list(all_values.keys())
@@ -112,9 +112,10 @@ class RunApp(APIView):
         # subprocess.check_output(exec_docker, shell=True)
 
         # docker_app = DockerApp.objects.filter(name=name)
+
         exe_app = ExecutionApp()
-        exe_app.app = DockerApp(name=name, envs = app[0]["envs"])
-        exe_app.app.save()
+        exe_app.app = app
+
         exe_app.run_params = app[0]["envs"]
         exe_app.is_running = True
         exe_app.created_container_id = returned_output
